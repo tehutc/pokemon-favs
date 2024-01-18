@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Collection</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Pokemon Collection</h1>
+    </header>
+
+    <main>
+        <section id="pokemon-collection">
+            <button id="sort-collection-az">A-Z</button>
+            <button id="sort-collection-za">Z-A</button>
+            <h2>Collection</h2>
+            <div id="collection-container">
+                <!-- Pokemon items will be added here dynamically -->
+            </div>
+        </section>
+        
+        
+        <section id="favorites">
+            <button id="sort-fav-az">A-Z</button>
+            <button id="sort-fav-za">Z-A</button>
+            <h2>Favorites</h2>
+            <div id="favorites-container">
+                <!-- Favorite Pokemon will be displayed here -->
+            </div>
+            <div id="summary">
+                <p>Total Height of Favorites: <span id="total-height">0</span> decimeters</p>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
