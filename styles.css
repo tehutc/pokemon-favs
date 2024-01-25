@@ -27,21 +27,24 @@ button {
     border-radius: 10px;
 }
 
-button:hover{
+button:hover {
     cursor: pointer;
 }
 
 
-#pokemon-collection, #favorites {
+#pokemon-collection,
+#favorites {
     width: 45%;
     min-width: 18.75rem;
 }
 
-#pokemon-collection h2, #favorites h2 {
+#pokemon-collection h2,
+#favorites h2 {
     color: #3b4cca;
 }
 
-#collection-container, #favorites-container {
+#collection-container,
+#favorites-container {
     border: 1px solid #ddd;
     padding: 10px;
     min-height: 12.5rem;
@@ -67,7 +70,8 @@ button:hover{
         margin-top: 5rem;
     }
 
-    #pokemon-collection, #favorites {
+    #pokemon-collection,
+    #favorites {
         width: 90%;
     }
 }

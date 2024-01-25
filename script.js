@@ -2,41 +2,53 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=30');
         const { results } = await response.json();
-        await displayData(results);
+        await fetchData(results);
         setupEventListeners();
     } catch (error) {
         console.error('Error fetching data:', error);
     }
 });
 
-async function displayData(pokemons) {
-    const collectionContainer = document.getElementById('collection-container');
+async function fetchData(pokemons) {
+    const resArr = [];
     for (const pokemon of pokemons) {
         try {
-            const response = await fetch(pokemon.url); // Fetching detailed data for each pokemon
+            const response = await fetch(pokemon.url);
             const pokemonDetails = await response.json();
-            const heightInMeters = pokemonDetails.height * 0.1; // Convert decimeters to meters
-
-            collectionContainer.innerHTML += `<div class="pokemon-card" id="${pokemonDetails.name}" data-height="${heightInMeters}">
-                <h3>${pokemonDetails.name}</h3>
-                <p>Weight: ${((pokemonDetails.weight) * .1).toFixed(2)} kg</p>
-                <p>Height: ${heightInMeters.toFixed(2)} decimeters</p>
-                <button class="toggle-favorite">Add to Favorites</button>
-            </div>`;
+            resArr.push(pokemonDetails);
         } catch (error) {
-            console.error('Error fetching details for pokemon:', pokemon.name, error);
+            console.error('Error fetching details for pokemon', pokemon.name, error);
         }
     }
+    showData(resArr);
+}
+
+const showData = (arrData) => {
+    const collectionContainer = document.getElementById('collection-container');
+    arrData.forEach((pokemonDetails) => {
+        const heightInMeters = pokemonDetails.height * 0.1;
+        const weightInKg = pokemonDetails.weight * 0.1;
+
+        collectionContainer.innerHTML += `<div class="pokemon-card" id="${pokemonDetails.name}" data-height="${heightInMeters}" data-weight="${weightInKg}">
+                <h3>${pokemonDetails.name} </h3>
+                <p>Weight: ${weightInKg.toFixed(2)} kg </p>
+                <p>Height: ${heightInMeters.toFixed(2)} meters</p>
+                <button class="toggle-favorite">Add to Favorites</button>
+                </div>`;
+    });
     setupEventListeners();
+    calculateTotals();
 }
 
 
+
+
 function setupEventListeners() {
-    document.querySelectorAll('.pokemon-card button').forEach(button => 
+    document.querySelectorAll('.pokemon-card button').forEach(button =>
         button.addEventListener('click', toggleFavoriteStatus)
     );
-    ['sort-collection-az', 'sort-collection-za', 'sort-fav-az', 'sort-fav-za'].forEach(id => 
-        document.getElementById(id).addEventListener('click', () => 
+    ['sort-collection-az', 'sort-collection-za', 'sort-fav-az', 'sort-fav-za'].forEach(id =>
+        document.getElementById(id).addEventListener('click', () =>
             sortingPoke(id.includes('collection') ? 'collection-container' : 'favorites-container', id.endsWith('az'))));
 }
 
@@ -44,10 +56,10 @@ function toggleFavoriteStatus(event) {
     const pokemonCard = event.target.closest('.pokemon-card');
     const isFavorite = pokemonCard.parentNode.id === 'favorites-container';
     (isFavorite ? document.getElementById('collection-container') : document.getElementById('favorites-container'))
-    .appendChild(pokemonCard);
+        .appendChild(pokemonCard);
     event.target.innerText = isFavorite ? 'Add to Favorites' : 'Remove from Favorites';
     setupEventListeners();
-    calculateHeight();
+    calculateTotals();
 }
 
 function sortingPoke(containerId, sortAZ) {
@@ -58,13 +70,24 @@ function sortingPoke(containerId, sortAZ) {
 }
 
 
-function calculateHeight() {
-    const cards = Array.from(document.getElementById('favorites-container').getElementsByClassName('pokemon-card'));
+function calculateTotals() {
+    calculateTotalsForContainer('collection-container', 'total-height-collection', 'total-weight-collection');
+    calculateTotalsForContainer('favorites-container', 'total-height-fav', 'total-weight-fav');
+}
 
-    const totalHeight = cards.reduce((total, card, index) => {
+function calculateTotalsForContainer(containerId, totalHeightElementId, totalWeightElementId) {
+    const cards = Array.from(document.getElementById(containerId).getElementsByClassName('pokemon-card'));
+
+    const totalHeight = cards.reduce((total, card) => {
         const height = parseFloat(card.getAttribute('data-height')) || 0;
         return total + height;
     }, 0);
-    document.getElementById('total-height').innerText = totalHeight.toFixed(2);
-}
 
+    const totalWeight = cards.reduce((total, card) => {
+        const weight = parseFloat(card.getAttribute('data-weight')) || 0; // Assuming 'data-weight' attribute is set correctly
+        return total + weight;
+    }, 0);
+
+    document.getElementById(totalHeightElementId).innerText = totalHeight.toFixed(2);
+    document.getElementById(totalWeightElementId).innerText = totalWeight.toFixed(2);
+}
